@@ -4,19 +4,20 @@ import { Button } from "@material-tailwind/react";
 import Nav from "./Nav";
 
 import Home1 from '../images/home1.jpg'
+import Footer from "./Footer";
 
 const Home = () => {
   const navigate = useNavigate()
   
   const handlegetstarted = () => {
-    navigate('/login')    
+    navigate('/signup')
   }
 
   return (
     <>
       <Nav />
       <div>
-        <section className="border-b-[10px] border-[#7D5A5A]">
+        <section className="">
           <div className="sm:h-[89vh] h-[87vh] sm:flex justify-evenly items-center sm:p-[50px] p-[20px] sm:text-left text-center">
             <div className="sm:w-1/2 mx-[20px]">
               <h1 className="font-poppins font-bold text-[#7D5A5A] sm:text-[30px] text-[22px] sm:my-[20px] my-[10px] ">
@@ -52,6 +53,7 @@ const Home = () => {
           </div>
         </section>
       </div>
+      <Footer/>
     </>
   );
 };

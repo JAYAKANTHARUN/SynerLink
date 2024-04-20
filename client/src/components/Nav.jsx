@@ -7,7 +7,15 @@ import {
   IconButton,
   Input,
 } from "@material-tailwind/react";
+import { useNavigate } from "react-router-dom";
 const Nav = () => {
+  
+  const navigate = useNavigate()
+  
+  const handlelogin = () => {
+    navigate('/login')
+  }
+
   const [openNav, setOpenNav] = React.useState(false);
 
   React.useEffect(() => {
@@ -124,7 +132,7 @@ const Nav = () => {
       <div className="container mx-auto flex flex-wrap items-center justify-between text-[#503C3C]">
         <Typography
           as="a"
-          href="#"
+          href="/"
           className="mr-4 cursor-pointer py-1.5 font-normal text-xl font-poppins "
         >
           SynerLink
@@ -167,9 +175,16 @@ const Nav = () => {
           </div>
           <Button
             size="md"
-            className="rounded-lg bg-[#F1D1D1] border-[1px] border-[#503C3C] text-[#392a2a] "
+            className="rounded-lg bg-[#F3E1E1] border-[1px] border-[#503C3C] text-[#392a2a] "
           >
             Search
+          </Button>
+          <Button
+          onClick={handlelogin}
+            size="md"
+            className="rounded-lg bg-[#F1D1D1] border-[1px] border-[#503C3C] text-[#392a2a] "
+          >
+            Login
           </Button>
         </div>
         <IconButton
