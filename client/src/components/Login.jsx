@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useState} from "react";
 import login from "../images/login.jpg";
 
 import {
@@ -13,10 +13,33 @@ import Footer from "./Footer";
 import Nav from "./Nav";
 
 const Login = () => {
-  const navigate = useNavigate();
+const [email, setemail] = useState('')
+const [password, setpassword] = useState('')
+const navigate = useNavigate();
 
-  const handlelogin = () => {
-    navigate("/landing");
+  const handlelogin = async() => {
+        console.log('clicked login button')
+        console.log( email, password)
+        let result = await fetch('http://192.168.29.250:5000/login', {
+            method: 'post',
+            body: JSON.stringify({ email, password }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        result = await result.json()
+        console.log(result)
+    //     if (result.user.name && result.user.email && result.auth) {
+    //         localStorage.setItem("user", JSON.stringify(result.user))
+    //         localStorage.setItem("token", JSON.stringify(result.auth))
+    //         setIsLoading(false)
+    //         navigate('/userproducts')
+    //     }
+    //     else {
+    //         setIsLoading(false)
+    //         alert("Please enter valid details")
+    //     }
+    // navigate("/landing");
   };
 
   return (
@@ -72,7 +95,10 @@ const Login = () => {
                     Your Email
                   </Typography>
                   <Input
-                    size="lg"
+                  type="email" id='email' value={email} onChange={(e) => { setemail(e.target.value) }}
+
+                  
+                  size="lg"
                     placeholder="name@mail.com"
                     className=" !border-[#7D5A5A] focus:!border-[#7D5A5A] font-poppins bg-[#FAF2F2]"
                     labelProps={{
@@ -87,7 +113,7 @@ const Login = () => {
                     Password
                   </Typography>
                   <Input
-                    type="password"
+                    type="password" id='password' value={password} onChange={(e) => { setpassword(e.target.value) }} 
                     size="lg"
                     placeholder="********"
                     className=" !border-[#7D5A5A] focus:!border-[#7D5A5A] font-poppins bg-[#FAF2F2] "

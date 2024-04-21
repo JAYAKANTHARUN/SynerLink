@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import signup from "../images/signup.jpg";
 
@@ -13,9 +14,26 @@ import Footer from "./Footer";
 import Nav from "./Nav";
 
 const Signup = () => {
+  const[name,setname]=useState('')
+  const [email, setemail] = useState('')
+  const [password, setpassword] = useState('')
+  const[confirmpassword,setconfirmpassword]=useState('')
+  const [phone, setphone] = useState('')
+
+
   const navigate = useNavigate();
 
-  const handlesignup = () => {
+  const handlesignup = async() => {  console.log('clicked login button')
+  console.log( email, password)
+  let result = await fetch('http://192.168.29.250:5000/signup', {
+      method: 'post',
+      body: JSON.stringify({ email, password }),
+      headers: {
+          'Content-Type': 'application/json'
+      }
+  })
+  result = await result.json()
+  console.log(result)
     navigate("/login");
   };
 
@@ -65,6 +83,7 @@ const Signup = () => {
                     Your Name
                   </Typography>
                   <Input
+                   type="text" id='name' value={name} onChange={(e) => { setname(e.target.value) }}
                     size="lg"
                     placeholder="name"
                     className=" !border-[#7D5A5A] focus:!border-[#7D5A5A] font-poppins bg-[#FAF2F2]"
@@ -80,6 +99,7 @@ const Signup = () => {
                     Your Email
                   </Typography>
                   <Input
+                   type="email" id='email' value={email} onChange={(e) => { setemail(e.target.value) }}
                     size="lg"
                     placeholder="name@mail.com"
                     className=" !border-[#7D5A5A] focus:!border-[#7D5A5A] font-poppins bg-[#FAF2F2]"
@@ -95,7 +115,8 @@ const Signup = () => {
                     Password
                   </Typography>
                   <Input
-                    type="password"
+                   type="password" id='password' value={password} onChange={(e) => { setpassword(e.target.value) }}
+                    
                     size="lg"
                     placeholder="********"
                     className=" !border-[#7D5A5A] focus:!border-[#7D5A5A] font-poppins bg-[#FAF2F2]"
@@ -111,7 +132,10 @@ const Signup = () => {
                     Confirm Password
                   </Typography>
                   <Input
-                    type="password"
+                  type="password" id='confirmpassword' value={confirmpassword} onChange={(e) => { setconfirmpassword(e.target.value) }}
+                  
+                  
+                    
                     size="lg"
                     placeholder="********"
                     className=" !border-[#7D5A5A] focus:!border-[#7D5A5A] font-poppins bg-[#FAF2F2]"
