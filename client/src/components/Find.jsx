@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react'
 import NavIn from "./NavIn";
 import Footer from "./Footer";
 import {
@@ -8,7 +8,7 @@ import {
   Typography,
   Button,
 } from "@material-tailwind/react";
-const Landing = () => {
+const Find = () => {
   const projects = [
     {
       title: "E-commerce Website",
@@ -105,6 +105,6 @@ const Landing = () => {
       <Footer />
     </div>
   );
-};
+}
 
-export default Landing;
+export default Find
