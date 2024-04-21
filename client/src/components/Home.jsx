@@ -29,7 +29,7 @@ const Home = () => {
                 Look no further! Discover new opportunities, contribute to
                 exciting projects, and make meaningful connections.
               </h1>
-              <Button onClick={handlegetstarted} variant="text" className="flex items-center gap-2 text-lg font-poppins my-5 bg-[#F1D1D1] border-[1px] border-[#7D5A5A]  ">
+              <Button onClick={handlegetstarted} variant="text" className="flex items-center gap-2 text-lg font-poppins my-5 bg-[#F1D1D1] border-[1px] border-[#7D5A5A] ">
                 Get Started{" "}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
