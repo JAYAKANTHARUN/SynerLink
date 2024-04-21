@@ -34,18 +34,23 @@ const Create = () => {
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const handleSkillSelect = (skill) => {
-    setSelectedSkills([...selectedSkills, skill]);
+    if (selectedSkills.length < 6) {
+      setSelectedSkills([...selectedSkills, skill]);
+    }
     setIsOpen(false);
   };
 
   const handleSkillRemove = (skill) => {
     setSelectedSkills(selectedSkills.filter((s) => s !== skill));
   };
+  const availableSkills = skills.filter(
+    (skill) => !selectedSkills.includes(skill)
+  );
   return (
     <div>
       <NavIn />
-      <div className="py-10 ">
-        <div className="flex h-[80vh] mx-64 font-poppins border-[1px] border-[#7D5A5A] rounded-[50px] bg-[#FAF2F2] ">
+      <div className="py-5 ">
+        <div className="flex h-[84vh] mx-64 font-poppins border-[1px] border-[#7D5A5A] rounded-[50px] bg-[#FAF2F2] ">
           <div className="w-1/2 flex flex-wrap justify-center  my-5">
             <Card color="transparent" shadow={false}>
               <div className="flex flex-row">
@@ -108,6 +113,7 @@ const Create = () => {
                     />
                   </div>
                   <div>
+                    {/* <div className="flex"> */}
                     <button
                       onClick={(event) => {
                         event.preventDefault();
@@ -126,7 +132,7 @@ const Create = () => {
                         data-popover-placement="bottom"
                         className="absolute z-10 min-w-[180px] overflow-auto rounded-md border border-[#7D5A5A] bg-[#FAF2F2] p-3 font-sans text-sm font-normal text-[#503C3C] shadow-lg shadow-blue-gray-500/10 focus:outline-none"
                       >
-                        {skills.map((skill, index) => (
+                        {availableSkills.map((skill, index) => (
                           <li
                             role="menuitem"
                             className="block w-full cursor-pointer select-none rounded-md px-3 pt-[9px] pb-2 text-start leading-tight transition-all hover:bg-[#F1D1D1] hover:bg-opacity-80 hover:text-blue-gray-900 focus:bg-blue-gray-50 focus:bg-opacity-80 focus:text-blue-gray-900 active:bg-blue-gray-50 active:bg-opacity-80 active:text-blue-gray-900"
@@ -138,38 +144,45 @@ const Create = () => {
                         ))}
                       </ul>
                     )}
-                    <div className="flex flex-wrap">
-                      {selectedSkills.map((skill, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center border rounded p-2 m-1"
-                        >
-                          <span>{skill}</span>
-                          <svg
-                            onClick={() => handleSkillRemove(skill)}
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5 ml-2 cursor-pointer"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
+                    {selectedSkills.length > 0 ? (
+                      <div className="flex flex-wrap h-[100px]">
+                        {selectedSkills.map((skill, index) => (
+                          <div
+                            key={index}
+                            className="w-[120px] h-[40px] bg-[#F1D1D1] rounded-2xl text-[#503C3C] flex items-center border p-2 m-1 text-[15px]"
                           >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M6 18L18 6M6 6l12 12"
-                            />
-                          </svg>
-                        </div>
-                      ))}
-                    </div>
+                            <span className="w-[100px] overflow-hidden text-overflow-ellipsis whitespace-nowrap">
+                              {skill}
+                            </span>
+                            <svg
+                              onClick={() => handleSkillRemove(skill)}
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-5 w-5 ml-2 cursor-pointer "
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="#503C3C"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M6 18L18 6M6 6l12 12"
+                              />
+                            </svg>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="h-[100px]"></div>
+                    )}
                   </div>
+                  {/* </div> */}
                   <Checkbox
                     label={
                       <Typography
                         variant="small"
                         color="gray"
-                        className="flex items-center font-normal text-[#7D5A5A] font-poppins"
+                        className="flex items-center font-normal text-[#7D5A5A] font-poppins -mt-3"
                       >
                         I agree the
                         <a
@@ -180,7 +193,7 @@ const Create = () => {
                         </a>
                       </Typography>
                     }
-                    containerProps={{ className: "-ml-2.5 " }}
+                    containerProps={{ className: "-ml-2.5 -mt-3 " }}
                   />
                 </div>
 
