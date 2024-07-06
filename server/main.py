@@ -29,7 +29,7 @@ def create_project():
 
 @app.route('/fetch_projects', methods=['GET'])
 def fetch_projects():
-        projects = db.projects.find()
+    projects = db.projects.find()
     project_list = []
     for project in projects:
             project_list.append(project)

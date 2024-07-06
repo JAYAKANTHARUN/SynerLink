@@ -20,7 +20,7 @@ const navigate = useNavigate();
   const handlelogin = async() => {
         console.log('clicked login button')
         console.log( email, password)
-        let result = await fetch('http://192.168.29.250:5000/login', {
+        let result = await fetch('http://192.168.1.8:5000/login', {
             method: 'post',
             body: JSON.stringify({ email, password }),
             headers: {
