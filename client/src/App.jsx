@@ -9,6 +9,7 @@ import MyProfile from './components/MyProfile'
 import Editprofile from './components/EditProfile'
 import Create from './components/Create'
 import Find from './components/Find'
+import Project from './components/Project';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/editprofile" element={ <Editprofile/> }/>
           <Route path="/create" element={ <Create/> }/>
           <Route path="/find" element={ <Find/> }/>
+          <Route path="/project/:projectName" element={<Project/>}/>
         </Routes>
     </BrowserRouter>
   )

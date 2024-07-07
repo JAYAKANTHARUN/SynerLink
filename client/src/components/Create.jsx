@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import NavIn from "./NavIn";
 import Footer from "./Footer";
 import { useNavigate } from "react-router-dom";
@@ -16,22 +16,11 @@ import create from "../images/create.jpg";
 const Create = () => {
   const navigate = useNavigate();
 
-  const skills = [
-    "Skill 1",
-    "Skill 2",
-    "Skill 3",
-    "Skill 4",
-    "Skill 5",
-    "Skill 6",
-    "Skill 7",
-    "Skill 8",
-    "Skill 9",
-    "Skill 10",
-  ];
+  const skills =  [ "Java", "JavaScript", "PHP", "C", "HTML", "CSS", "Python", "SQL", "MySQL", "C#", "Kotlin", "Swift", "Go", "Ruby", "Haskell", "Assembly Language", "Scala", "Dart", "TypeScript", "VB.Net", "R", "Matlab", "Arduino", "Bash/Shell Scripting", "Java EE", "Spring Framework", "Node.js", "React.js", "Angular.js", "Vue.js", "Django", "Laravel", "Express.js", "Flask", "ASP.NET", "ASP.NET MVC", "Ruby on Rails", "Perl", "C++", "Objective-C", "Smalltalk", "LOGO", "Prolog", "Lisp", "Scheme", "Erlang", "Elixir", "Rust", "Lua", "Julia", "Nim", "Clojure", "Haskell", "Malbolge", "Whitespace", "Befunge", "Chef", "Puppet", "Ansible", "SaltStack", "Terraform", "Docker", "Kubernetes", "Jenkins", "Git", "GitHub", "Bitbucket", "LabVIEW", "MATLAB Simulink", "Octave", "SciPy", "NumPy", "Pandas", "TensorFlow", "Keras", "PyTorch", "Scikit-learn", "OpenCV", "Matplotlib", "Seaborn", "Jupyter Notebook", "Colab", "Apache Spark", "Hadoop", "Flink", "Spark Streaming", "Kafka", "Zookeeper", "HBase", "Cassandra", "Neo4j", "MongoDB", "Couchbase", "Redis", "GraphQL", "API Gateway", "AWS Lambda", "Azure Functions", "Google Cloud Functions", "Serverless", "Cloud Computing", "AWS", "Microsoft Azure", "Google Cloud Platform", "Heroku", "DigitalOcean", "Vagrant", "VirtualBox", "VMware", "Linux", "Windows", "macOS", "UNIX", "BSD", "DOS", "Android", "iOS", "Windows Mobile", "BlackBerry OS", "WebAssembly", "Assembly Language (ARM)", "Brainfuck", "Whitespace", "Befunge" ]
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const handleSkillSelect = (skill) => {
-    if (selectedSkills.length < 6) {
+    if (selectedSkills.length < 9) {
       setSelectedSkills([...selectedSkills, skill]);
     }
     setIsOpen(false);
@@ -43,9 +32,17 @@ const Create = () => {
   const availableSkills = skills.filter(
     (skill) => !selectedSkills.includes(skill)
   );
+  const [email,setemail] = useState("")
   const [projectname, setprojectname] = useState("");
   const [projectdescription, setprojectdescription] = useState("");
   const [isChecked, setIsChecked] = useState(false);
+
+  useEffect(()=>{
+    const useremail = localStorage.getItem("email");
+    if (useremail){
+      setemail(useremail);
+    }
+  },[])
 
   const handlecreate = async () => {
     if (
@@ -54,20 +51,21 @@ const Create = () => {
       isChecked &&
       selectedSkills.length != 0
     ) {
-      console.log(projectname, projectdescription, selectedSkills);
-      // let result = await fetch("http://192.168.29.250:5000/create", {
-      //   method: "post",
-      //   body: JSON.stringify({
-      //     projectname,
-      //     projectdescription,
-      //     selectedSkills,
-      //   }),
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      // });
-      // result = await result.json();
-      // console.log(result);
+      let result = await fetch("http://192.168.29.250:5000/create_project", {
+        method: "post",
+        body: JSON.stringify({
+          email,
+          projectname,
+          projectdescription,
+          selectedSkills,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      result = await result.json();
+      console.log(result);
+      navigate('/landing')
     } else {
       alert("Enter valid details");
     }
@@ -165,7 +163,7 @@ const Create = () => {
                         role="menu"
                         data-popover="menu"
                         data-popover-placement="bottom"
-                        className="absolute z-10 min-w-[180px] overflow-auto rounded-md border border-[#7D5A5A] bg-[#FAF2F2] p-3 font-sans text-sm font-normal text-[#503C3C] shadow-lg shadow-blue-gray-500/10 focus:outline-none"
+                        className="absolute z-10 min-w-[180px] overflow-scroll h-[200px] rounded-md border-[1px] border-[#7D5A5A] bg-[#FAF2F2] p-3 font-sans text-sm font-normal text-[#503C3C] shadow-lg shadow-blue-gray-500/10 focus:outline-none"
                       >
                         {availableSkills.map((skill, index) => (
                           <li
