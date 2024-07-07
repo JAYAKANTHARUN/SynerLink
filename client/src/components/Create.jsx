@@ -16,9 +16,6 @@ import create from "../images/create.jpg";
 const Create = () => {
   const navigate = useNavigate();
 
-  const handlecreate = () => {
-    navigate("/landing");
-  };
   const skills = [
     "Skill 1",
     "Skill 2",
@@ -34,25 +31,59 @@ const Create = () => {
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const handleSkillSelect = (skill) => {
-    setSelectedSkills([...selectedSkills, skill]);
+    if (selectedSkills.length < 6) {
+      setSelectedSkills([...selectedSkills, skill]);
+    }
     setIsOpen(false);
   };
 
   const handleSkillRemove = (skill) => {
     setSelectedSkills(selectedSkills.filter((s) => s !== skill));
   };
+  const availableSkills = skills.filter(
+    (skill) => !selectedSkills.includes(skill)
+  );
+  const [projectname, setprojectname] = useState("");
+  const [projectdescription, setprojectdescription] = useState("");
+  const [isChecked, setIsChecked] = useState(false);
+
+  const handlecreate = async () => {
+    if (
+      projectname &&
+      projectdescription &&
+      isChecked &&
+      selectedSkills.length != 0
+    ) {
+      console.log(projectname, projectdescription, selectedSkills);
+      // let result = await fetch("http://192.168.29.250:5000/create", {
+      //   method: "post",
+      //   body: JSON.stringify({
+      //     projectname,
+      //     projectdescription,
+      //     selectedSkills,
+      //   }),
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      // });
+      // result = await result.json();
+      // console.log(result);
+    } else {
+      alert("Enter valid details");
+    }
+  };
   return (
     <div>
       <NavIn />
-      <div className="py-10 ">
-        <div className="flex h-[80vh] mx-64 font-poppins border-[1px] border-[#7D5A5A] rounded-[50px] bg-[#FAF2F2] ">
+      <div className="py-5 ">
+        <div className="flex h-[84vh] mx-64 font-poppins border-[1px] border-[#7D5A5A] rounded-[50px] bg-[#FAF2F2] ">
           <div className="w-1/2 flex flex-wrap justify-center  my-5">
             <Card color="transparent" shadow={false}>
               <div className="flex flex-row">
                 <Typography
                   variant="h4"
                   color="blue-gray"
-                  className="text-[#503C3C] text-[25px] font-poppins"
+                  className="text-[#503C3C] text-[23px] font-poppins"
                 >
                   Create New Project
                 </Typography>
@@ -73,11 +104,11 @@ const Create = () => {
               </div>
               <Typography
                 color="gray"
-                className="mt-1 font-normal text-[#7D5A5A]  font-poppins"
+                className="font-normal text-[#7D5A5A]  font-poppins"
               >
                 Let's get started! Enter your project details below.
               </Typography>
-              <form className="mt-5 mb-2 w-80 max-w-screen-lg sm:w-96">
+              <form className="mt-3 mb-2 w-80 max-w-screen-lg sm:w-96">
                 <div className="mb-1 flex flex-col gap-6">
                   <Typography
                     variant="h6"
@@ -87,6 +118,11 @@ const Create = () => {
                     Project Name
                   </Typography>
                   <Input
+                    type="text"
+                    value={projectname}
+                    onChange={(e) => {
+                      setprojectname(e.target.value);
+                    }}
                     size="lg"
                     placeholder="Name"
                     className=" focus:!border-[#7D5A5A] font-poppins bg-[#FAF2F2]"
@@ -97,17 +133,22 @@ const Create = () => {
                   <Typography
                     variant="h6"
                     color="blue-gray"
-                    className="-mb-5 text-[#7D5A5A] font-poppins"
+                    className="-mb-5 -mt-3 text-[#7D5A5A] font-poppins"
                   >
                     Project Description
                   </Typography>
                   <div className="w-96">
                     <Textarea
+                      value={projectdescription}
+                      onChange={(e) => {
+                        setprojectdescription(e.target.value);
+                      }}
                       className="border-[#7D5A5A] focus:border-[#7D5A5A] text-[#7D5A5A] focus:ring-0 "
                       label="Enter 10-50 words"
                     />
                   </div>
                   <div>
+                    {/* <div className="flex"> */}
                     <button
                       onClick={(event) => {
                         event.preventDefault();
@@ -126,7 +167,7 @@ const Create = () => {
                         data-popover-placement="bottom"
                         className="absolute z-10 min-w-[180px] overflow-auto rounded-md border border-[#7D5A5A] bg-[#FAF2F2] p-3 font-sans text-sm font-normal text-[#503C3C] shadow-lg shadow-blue-gray-500/10 focus:outline-none"
                       >
-                        {skills.map((skill, index) => (
+                        {availableSkills.map((skill, index) => (
                           <li
                             role="menuitem"
                             className="block w-full cursor-pointer select-none rounded-md px-3 pt-[9px] pb-2 text-start leading-tight transition-all hover:bg-[#F1D1D1] hover:bg-opacity-80 hover:text-blue-gray-900 focus:bg-blue-gray-50 focus:bg-opacity-80 focus:text-blue-gray-900 active:bg-blue-gray-50 active:bg-opacity-80 active:text-blue-gray-900"
@@ -138,55 +179,66 @@ const Create = () => {
                         ))}
                       </ul>
                     )}
-                    <div className="flex flex-wrap">
-                      {selectedSkills.map((skill, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center border rounded p-2 m-1"
-                        >
-                          <span>{skill}</span>
-                          <svg
-                            onClick={() => handleSkillRemove(skill)}
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5 ml-2 cursor-pointer"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
+                    {selectedSkills.length > 0 ? (
+                      <div className="flex flex-wrap h-[100px]">
+                        {selectedSkills.map((skill, index) => (
+                          <div
+                            key={index}
+                            className="w-[120px] h-[40px] bg-[#F1D1D1] rounded-2xl text-[#503C3C] flex items-center border p-2 m-1 text-[15px]"
                           >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M6 18L18 6M6 6l12 12"
-                            />
-                          </svg>
-                        </div>
-                      ))}
-                    </div>
+                            <span className="w-[100px] overflow-hidden text-overflow-ellipsis whitespace-nowrap">
+                              {skill}
+                            </span>
+                            <svg
+                              onClick={() => handleSkillRemove(skill)}
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-5 w-5 ml-2 cursor-pointer "
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="#503C3C"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M6 18L18 6M6 6l12 12"
+                              />
+                            </svg>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="h-[100px]"></div>
+                    )}
                   </div>
-                  <Checkbox
-                    label={
-                      <Typography
-                        variant="small"
-                        color="gray"
-                        className="flex items-center font-normal text-[#7D5A5A] font-poppins"
-                      >
-                        I agree the
-                        <a
-                          href="#"
-                          className="font-medium transition-colors hover:text-gray-900 text-[#7D5A5A] font-poppins"
+                  {/* </div> */}
+                  <div className="mt-10">
+                    <Checkbox
+                      checked={isChecked}
+                      onChange={(e) => setIsChecked(e.target.checked)}
+                      label={
+                        <Typography
+                          variant="small"
+                          color="gray"
+                          className="flex items-center font-normal text-[#7D5A5A] font-poppins -mt-3"
                         >
-                          &nbsp;Terms and Conditions
-                        </a>
-                      </Typography>
-                    }
-                    containerProps={{ className: "-ml-2.5 " }}
-                  />
+                          I agree the
+                          <a
+                            href="#"
+                            className="font-medium transition-colors hover:text-gray-900 text-[#7D5A5A] font-poppins"
+                          >
+                            &nbsp;Terms and Conditions
+                          </a>
+                        </Typography>
+                      }
+                      containerProps={{ className: "-ml-2.5 -mt-3 " }}
+                    />
+                  </div>
                 </div>
 
                 <Button
                   onClick={handlecreate}
-                  className="mt-2 text-[14px] bg-[#F1D1D1] text-[#503C3C] border-[#503C3C] border-[1px] font-poppins"
+                  className="text-[14px] bg-[#F1D1D1] text-[#503C3C] border-[#503C3C] border-[1px] font-poppins"
                   fullWidth
                 >
                   Create

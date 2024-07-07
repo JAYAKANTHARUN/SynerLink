@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import NavIn from "./NavIn";
 import Footer from "./Footer";
 import {
@@ -9,20 +9,68 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
+import edit from "../images/edit.webp";
+import { EyeSlashIcon, EyeIcon } from "@heroicons/react/24/solid";
+
 const EditProfile = () => {
+  const [newname, setnewname] = useState("");
+  const [newemail, setnewemail] = useState("");
+  const [newpassword, setnewpassword] = useState("");
   const navigate = useNavigate();
 
-  const handlelogin = () => {
-    
-    navigate("/landing");
+  const [passwordShown, setPasswordShown] = useState(false);
+  const togglePasswordVisiblity = () => setPasswordShown((cur) => !cur);
+
+  const fileInputRef = useRef(null);
+
+  const [filename, setFilename] = useState("No file selected");
+  const [file, setFile] = useState(null);
+  const [file64, setFile64] = useState("");
+
+  const handleUploadClick = () => {
+    fileInputRef.current.click();
   };
+
+  const handleFileChange = (event) => {
+    const selectedFile = event.target.files[0];
+    // console.log(selectedFile);
+    if (selectedFile) {
+      setFilename(selectedFile.name);
+      setFile(selectedFile);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result;
+        // console.log(base64String);
+        setFile64(base64String);
+      };
+      reader.readAsDataURL(selectedFile);
+
+    } else {
+      setFilename("No file selected");
+      setFile(null);
+      setFile64("");
+    }
+  };
+
+  const handleedit = async () => {
+    let result = await fetch("http://192.168.29.250:5000/edit", {
+      method: "post",
+      body: JSON.stringify({ newname, newemail, newpassword, filename }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    result = await result.json();
+    console.log(result);
+  };
+
   return (
     <div>
       <NavIn />
       <div className="py-10 ">
         <div className="flex h-[80vh] mx-64 font-poppins border-[1px] border-[#7D5A5A] rounded-[50px] bg-[#FAF2F2] ">
-          
-          <div className="w-1/2 flex flex-wrap justify-center py-5 my-10 -ml-10">
+          <div className="w-1/2 flex flex-wrap justify-center pt-5">
             <Card color="transparent" shadow={false}>
               <div className="flex flex-row">
                 <Typography
@@ -51,7 +99,7 @@ const EditProfile = () => {
                 color="gray"
                 className="mt-1 font-normal text-[#7D5A5A]  font-poppins"
               >
-              Please enter your details to edit.
+                Please enter your details to edit.
               </Typography>
               <form className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96">
                 <div className="mb-1 flex flex-col gap-6">
@@ -60,9 +108,36 @@ const EditProfile = () => {
                     color="blue-gray"
                     className="-mb-5 text-[#7D5A5A] font-poppins"
                   >
-                    Your Email
+                    New Name
                   </Typography>
                   <Input
+                    type="text"
+                    id="newname"
+                    value={newname}
+                    onChange={(e) => {
+                      setnewname(e.target.value);
+                    }}
+                    size="lg"
+                    placeholder="name"
+                    className=" !border-[#7D5A5A] focus:!border-[#7D5A5A] font-poppins bg-[#FAF2F2]"
+                    labelProps={{
+                      className: "before:content-none after:content-none",
+                    }}
+                  />
+                  <Typography
+                    variant="h6"
+                    color="blue-gray"
+                    className="-mb-5 text-[#7D5A5A] font-poppins"
+                  >
+                    New Email
+                  </Typography>
+                  <Input
+                    type="email"
+                    id="newemail"
+                    value={newemail}
+                    onChange={(e) => {
+                      setnewemail(e.target.value);
+                    }}
                     size="lg"
                     placeholder="name@mail.com"
                     className=" !border-[#7D5A5A] focus:!border-[#7D5A5A] font-poppins bg-[#FAF2F2]"
@@ -70,19 +145,79 @@ const EditProfile = () => {
                       className: "before:content-none after:content-none",
                     }}
                   />
-                  
+                  <Typography
+                    variant="h6"
+                    color="blue-gray"
+                    className="-mb-5 text-[#7D5A5A] font-poppins"
+                  >
+                    New Password
+                  </Typography>
+                  <Input
+                    type={passwordShown ? "text" : "password"}
+                    id="newpassword"
+                    value={newpassword}
+                    onChange={(e) => {
+                      setnewpassword(e.target.value);
+                    }}
+                    size="lg"
+                    placeholder="**********"
+                    className=" !border-[#7D5A5A] focus:!border-[#7D5A5A] font-poppins bg-[#FAF2F2]"
+                    labelProps={{
+                      className: "before:content-none after:content-none",
+                    }}
+                    icon={
+                      <i
+                        onClick={togglePasswordVisiblity}
+                        className="-mt-[3px] p-[5px] hover:bg-[#e9e3e3] rounded-full transition-all duration-300 ease-in-out "
+                      >
+                        {passwordShown ? (
+                          <EyeIcon className="h-5 w-5 text-[#7D5A5A]" />
+                        ) : (
+                          <EyeSlashIcon className="h-5 w-5 text-[#7D5A5A]" />
+                        )}
+                      </i>
+                    }
+                  />
                 </div>
-                
+                <>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    style={{ display: "none" }}
+                    accept=".pdf,.doc,.docx"
+                  />
+                  <Button
+                    onClick={handleUploadClick}
+                    className="mt-10 text-[14px] bg-[#F1D1D1] text-[#503C3C] border-[#503C3C] border-[1px] font-poppins"
+                    fullWidth
+                  >
+                    UPLOAD YOUR CV
+                  </Button>
+                </>
+                <Typography
+                  variant="h6"
+                  color="blue-gray"
+                  className="-mb-5 text-[#503C3C] font-normal font-poppins"
+                >
+                  {filename}
+                </Typography>
                 <Button
-                  onClick={handlelogin}
+                  onClick={handleedit}
                   className="mt-10 text-[14px] bg-[#F1D1D1] text-[#503C3C] border-[#503C3C] border-[1px] font-poppins"
                   fullWidth
                 >
-                  Login
+                  MAKE CHANGES
                 </Button>
-                
               </form>
             </Card>
+          </div>
+          <div className="w-1/2 ">
+            <img
+              className="w-auto float-right h-full object-cover rounded-tr-[50px] rounded-br-[50px] "
+              src={edit}
+              alt="Signup"
+            />
           </div>
         </div>
       </div>
