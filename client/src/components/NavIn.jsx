@@ -12,6 +12,7 @@ const NavIn = () => {
   const navigate = useNavigate();
 
   const handlelogout = () => {
+    localStorage.clear();
     navigate("/");
   };
   const handleeditprofile = () => {

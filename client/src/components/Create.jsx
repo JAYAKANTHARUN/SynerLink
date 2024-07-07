@@ -16,9 +16,6 @@ import create from "../images/create.jpg";
 const Create = () => {
   const navigate = useNavigate();
 
-  const handlecreate = () => {
-    navigate("/landing");
-  };
   const skills = [
     "Skill 1",
     "Skill 2",
@@ -46,6 +43,35 @@ const Create = () => {
   const availableSkills = skills.filter(
     (skill) => !selectedSkills.includes(skill)
   );
+  const [projectname, setprojectname] = useState("");
+  const [projectdescription, setprojectdescription] = useState("");
+  const [isChecked, setIsChecked] = useState(false);
+
+  const handlecreate = async () => {
+    if (
+      projectname &&
+      projectdescription &&
+      isChecked &&
+      selectedSkills.length != 0
+    ) {
+      console.log(projectname, projectdescription, selectedSkills);
+      // let result = await fetch("http://192.168.29.250:5000/create", {
+      //   method: "post",
+      //   body: JSON.stringify({
+      //     projectname,
+      //     projectdescription,
+      //     selectedSkills,
+      //   }),
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      // });
+      // result = await result.json();
+      // console.log(result);
+    } else {
+      alert("Enter valid details");
+    }
+  };
   return (
     <div>
       <NavIn />
@@ -57,7 +83,7 @@ const Create = () => {
                 <Typography
                   variant="h4"
                   color="blue-gray"
-                  className="text-[#503C3C] text-[25px] font-poppins"
+                  className="text-[#503C3C] text-[23px] font-poppins"
                 >
                   Create New Project
                 </Typography>
@@ -78,11 +104,11 @@ const Create = () => {
               </div>
               <Typography
                 color="gray"
-                className="mt-1 font-normal text-[#7D5A5A]  font-poppins"
+                className="font-normal text-[#7D5A5A]  font-poppins"
               >
                 Let's get started! Enter your project details below.
               </Typography>
-              <form className="mt-5 mb-2 w-80 max-w-screen-lg sm:w-96">
+              <form className="mt-3 mb-2 w-80 max-w-screen-lg sm:w-96">
                 <div className="mb-1 flex flex-col gap-6">
                   <Typography
                     variant="h6"
@@ -92,6 +118,11 @@ const Create = () => {
                     Project Name
                   </Typography>
                   <Input
+                    type="text"
+                    value={projectname}
+                    onChange={(e) => {
+                      setprojectname(e.target.value);
+                    }}
                     size="lg"
                     placeholder="Name"
                     className=" focus:!border-[#7D5A5A] font-poppins bg-[#FAF2F2]"
@@ -102,12 +133,16 @@ const Create = () => {
                   <Typography
                     variant="h6"
                     color="blue-gray"
-                    className="-mb-5 text-[#7D5A5A] font-poppins"
+                    className="-mb-5 -mt-3 text-[#7D5A5A] font-poppins"
                   >
                     Project Description
                   </Typography>
                   <div className="w-96">
                     <Textarea
+                      value={projectdescription}
+                      onChange={(e) => {
+                        setprojectdescription(e.target.value);
+                      }}
                       className="border-[#7D5A5A] focus:border-[#7D5A5A] text-[#7D5A5A] focus:ring-0 "
                       label="Enter 10-50 words"
                     />
@@ -177,29 +212,33 @@ const Create = () => {
                     )}
                   </div>
                   {/* </div> */}
-                  <Checkbox
-                    label={
-                      <Typography
-                        variant="small"
-                        color="gray"
-                        className="flex items-center font-normal text-[#7D5A5A] font-poppins -mt-3"
-                      >
-                        I agree the
-                        <a
-                          href="#"
-                          className="font-medium transition-colors hover:text-gray-900 text-[#7D5A5A] font-poppins"
+                  <div className="mt-10">
+                    <Checkbox
+                      checked={isChecked}
+                      onChange={(e) => setIsChecked(e.target.checked)}
+                      label={
+                        <Typography
+                          variant="small"
+                          color="gray"
+                          className="flex items-center font-normal text-[#7D5A5A] font-poppins -mt-3"
                         >
-                          &nbsp;Terms and Conditions
-                        </a>
-                      </Typography>
-                    }
-                    containerProps={{ className: "-ml-2.5 -mt-3 " }}
-                  />
+                          I agree the
+                          <a
+                            href="#"
+                            className="font-medium transition-colors hover:text-gray-900 text-[#7D5A5A] font-poppins"
+                          >
+                            &nbsp;Terms and Conditions
+                          </a>
+                        </Typography>
+                      }
+                      containerProps={{ className: "-ml-2.5 -mt-3 " }}
+                    />
+                  </div>
                 </div>
 
                 <Button
                   onClick={handlecreate}
-                  className="mt-2 text-[14px] bg-[#F1D1D1] text-[#503C3C] border-[#503C3C] border-[1px] font-poppins"
+                  className="text-[14px] bg-[#F1D1D1] text-[#503C3C] border-[#503C3C] border-[1px] font-poppins"
                   fullWidth
                 >
                   Create
