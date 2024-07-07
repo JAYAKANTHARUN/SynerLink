@@ -23,7 +23,7 @@ const MyProfile = () => {
         <section className="py-16 px-8">
           <div className="mx-auto container grid place-items-center grid-cols-1 md:grid-cols-2">
             <img
-              src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80"
+              src="https://www.garrickadenbuie.com/blog/process-profile-picture-magick/index_files/figure-html/resized-cropped-1.png"
               alt="profile_pic"
               className="h-[30rem] rounded-full"
             />

@@ -144,7 +144,7 @@ const NavIn = () => {
             <img
               onClick={() => setDropdownVisible(!dropdownVisible)}
               alt="tania andrew"
-              src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=1480&amp;q=80"
+              src="https://www.garrickadenbuie.com/blog/process-profile-picture-magick/index_files/figure-html/resized-cropped-1.png"
               className="ml-5 border-[1px] border-[#503C3C] relative inline-block object-cover object-center w-12 h-12 rounded-full cursor-pointer"
               data-popover-target="profile-menu"
             />
