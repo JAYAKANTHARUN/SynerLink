@@ -8,7 +8,7 @@ app = Flask(__name__)
 CORS(app)
 client = MongoClient('mongodb+srv://irfanrasheedkc:gTo5RnpsY7mpL2BZ@cluster0.mznznpy.mongodb.net/?retryWrites=true&w=majority')
 db = client['myproject1']
-projects_collection = db['projects']
+projects_collection = db.projects
 
 # Load the model and vectorizer
 loaded_model = joblib.load('job_prediction_model.joblib')
@@ -26,7 +26,9 @@ def signup():
     email = data.get('email')
     if db.users.find_one({'email': email}):
         return jsonify({'signup': 'False'}), 200  
+    data['position']='Common'
     db.users.insert_one(data)
+
     return jsonify({'signup': 'True'})
 
 @app.route('/login', methods=['POST'])
@@ -37,25 +39,36 @@ def login():
         return jsonify({'login': 'False'}), 200
     return jsonify({'login': 'True'}), 200
 
-# @app.route('/create_project', methods=['POST'])
-# def create_project():
-#     data = request.get_json()
-#     db.projects.insert_one(data)
-#     return 'Project details stored successfully'
 
-@app.route('/fetch_projects', methods=['GET'])
-def fetch_projects():
-    projects = db.projects.find()
+@app.route('/get_projects', methods=['GET'])
+def get_projects():
+    projects = db.projects.find({}, {"_id": 0})
     project_list = []
     for project in projects:
-            project_list.append(project)
+        project_list.append(project)
     return jsonify(project_list)
 
-def predict_job(new_skills_input):
+@app.route('/find_projects', methods=['POST'])
+def find_projects():
     data = request.get_json()
-    new_skills_input = data.get('skills', '')
-    new_skills = [new_skills_input]  # Put input in a list for vectorizer
+    id = data.get('email', '')
+    if id=='':
+        projects=[]
+    else:
+        user = db.users.find_one({"email": id})
+        print(user)
+        position=user['position']
+        print("Position is ",position)
+        projects = db.projects.find({'predicted_job':position}, {"_id": 0})
 
+    project_list = []
+    for project in projects:
+        project_list.append(project)
+    return jsonify(project_list)
+    
+def predict_job(new_skills_input):
+    new_skills = [new_skills_input]  # Put input in a list for vectorizer
+    print(new_skills)
     # Vectorize the new skills
     new_skills_vectorized = loaded_vectorizer.transform(new_skills)
 
@@ -68,26 +81,63 @@ def predict_job(new_skills_input):
         "Predicted Job": target_names[predicted_job[0]],
         "Prediction Confidence Score": str(predicted_prob[0][predicted_job[0]])
     }
-
+    print(target_names[predicted_job[0]],str(predicted_prob[0][predicted_job[0]]))
     # Return the prediction as JSON
-    return jsonify(response)
+    return target_names[predicted_job[0]]
 
+@app.route('/fetch_project',methods=['POST'])
+def fetch_project():
+    data = request.get_json()
+    print("Data is ")
+    print(data)
+    project_name = data.get('projectname', '')
+    print(project_name)
+    project_details=projects_collection.find_one({"project_name": project_name},{"_id":0})
+    print(project_details)
+    owner=project_details['owner']
+    print(owner)
+    owner_details=db.users.find_one({"email":owner},{"_id":0})
+    print("OWner details is :",owner_details)
+
+    print(owner_details)
+    response={
+        'project_name': project_details['project_name'],
+        'description': project_details['description'],
+        'skills': project_details['skills'],
+        'owner_email':owner_details['email'],
+        'owner_name':owner_details['name'],
+        'predicted_job': project_details['predicted_job']
+    }
+    return response
+
+@app.route('/get_user', methods=['POST'])
+def get_user():
+    data = request.get_json()
+    print(data)
+    email=data.get('email')
+    print(email)
+    user=db.users.find_one({"email": email},{"_id":0,"password":0})
+    print(user)
+    return jsonify(user)
 
 @app.route('/create_project', methods=['POST'])
 def create_project():
     data = request.get_json()
-    project_name = data.get('project_name', '')
-    description = data.get('description', '')
-    skills = data.get('skills', '')
+    print(data)
+    project_name = data.get('projectname', '')
+    description = data.get('projectdescription', '')
+    email = data.get('email','')
+    skills = data.get('selectedSkills', '')
+    skills_text = ' '.join(skills)
 
-    result=predict_job(skills)
-    predicted_job_name=result['Predicted Job']
+    predicted_job_name=predict_job(skills_text)
 
     # Save project information along with the predicted job post in the database
     project_data = {
         'project_name': project_name,
         'description': description,
         'skills': skills,
+        'owner':email,
         'predicted_job': predicted_job_name
     }
     projects_collection.insert_one(project_data)
@@ -121,8 +171,6 @@ def upload_pdf():
     with fitz.open(pdf_file_path) as doc:
         for page in doc:
             text += page.get_text()
-    print("Text is ")
-    print(text)
     pattern = r"Skills(.*?)Certifications"
 
     # Perform the regex search
@@ -136,9 +184,44 @@ def upload_pdf():
         print(skills_text)
     else:
         print("No match found.")
-        return {"edit":"False"}
+        return {"message":"No skills section found"}
 
-    x=predict_job(skills_text)
-    return x
+    position=predict_job(skills_text)
+
+    id = data.get('email')
+    email=data.get('newemail')
+    name = data.get('newname')
+    password = data.get('newpassword')
+
+    if not id:
+        return jsonify({"error": "Email is required"}), 400
+
+    # Find the document
+    print("Finding user with id : ",id)
+    user = db.users.find_one({"email": id})
+    print(user)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    email_update=False
+    # Prepare the update document
+    update_doc = {}
+    if name!='':
+        update_doc['name'] = name
+    if email!='':
+        email_update=True
+        update_doc['email'] = email
+    if password!='':
+        update_doc['password'] = password
+    # Example of appending a new value
+    update_doc['position'] = position
+
+    print(email)
+    print(update_doc)
+    # Update the document
+    db.users.update_one({"email": id}, {"$set": update_doc})
+
+    return jsonify({"message": "User updated successfully","email_update":email_update}), 200
+
 if __name__ == '__main__':
     app.run(debug=True,host='0.0.0.0')
