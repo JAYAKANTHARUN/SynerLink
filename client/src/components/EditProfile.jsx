@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import NavIn from "./NavIn";
 import Footer from "./Footer";
 import {
@@ -16,6 +16,8 @@ const EditProfile = () => {
   const [newname, setnewname] = useState("");
   const [newemail, setnewemail] = useState("");
   const [newpassword, setnewpassword] = useState("");
+  const [email, setemail] = useState("");
+
   const navigate = useNavigate();
 
   const [passwordShown, setPasswordShown] = useState(false);
@@ -45,7 +47,6 @@ const EditProfile = () => {
         setFile64(base64String);
       };
       reader.readAsDataURL(selectedFile);
-
     } else {
       setFilename("No file selected");
       setFile(null);
@@ -53,16 +54,38 @@ const EditProfile = () => {
     }
   };
 
+  useEffect(() => {
+    const storedEmail = localStorage.getItem("email");
+    if (storedEmail) setemail(storedEmail);
+  }, []);
+
   const handleedit = async () => {
-    let result = await fetch("http://192.168.29.250:5000/edit", {
-      method: "post",
-      body: JSON.stringify({ newname, newemail, newpassword, filename }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    result = await result.json();
-    console.log(result);
+    if (email && file64) {
+      let result = await fetch("http://192.168.29.250:5000/edit", {
+        method: "post",
+        body: JSON.stringify({
+          email,
+          newname,
+          newemail,
+          newpassword,
+          file64,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      result = await result.json();
+      console.log(result);
+      if (result.email_update == true) {
+        localStorage.clear();
+        localStorage.setItem("email", newemail);
+        navigate("/landing");
+      } else {
+        navigate("/landing");
+      }
+    } else {
+      alert("Enter valid details");
+    }
   };
 
   return (

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import NavIn from "./NavIn";
 import Footer from "./Footer";
 import {
@@ -8,14 +8,30 @@ import {
   Typography,
 } from "@material-tailwind/react";
 const MyProfile = () => {
-  const [skills, setSkills] = useState([
-    "Python",
-    "Java",
-    "Web Development",
-    "React",
-    "Node.js",
-    "Express.js"
-  ]);
+  const [user,setuser] = useState({});
+  useEffect(()=>{
+    let useremail = localStorage.getItem("email");
+    if (useremail){
+      getprofile(useremail);
+    }
+  },[]);
+  const getprofile = async (email) => {
+    if (email) {
+      let result = await fetch("http://192.168.29.250:5000/get_user", {
+        method: "post",
+        body: JSON.stringify({ email }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      result = await result.json();
+      console.log(result);
+      setuser(result);
+    } else {
+      alert("Enter valid details");
+    }
+  };
   return (
     <div>
       <NavIn />
@@ -25,7 +41,7 @@ const MyProfile = () => {
             <img
               src="https://www.garrickadenbuie.com/blog/process-profile-picture-magick/index_files/figure-html/resized-cropped-1.png"
               alt="profile_pic"
-              className="h-[30rem] rounded-full"
+              className="h-[25rem] rounded-full"
             />
             <div>
               <Typography className="mb-4 font-poppins text-[30px] text-[#503C3C]" variant="h3">
@@ -40,33 +56,19 @@ const MyProfile = () => {
               <div className="mb-4 ">
                 <Typography className="font-poppins text-[20px] text-[#503C3C] m-1 px-2 font-medium ">Name:</Typography>
                 <div className="bg-[#F3E1E1] w-[400px] p-[2px] rounded-2xl px-2 ">
-                  <Typography className="font-poppins text-[18px] text-[#503C3C] m-1 ">Alex Ferguson</Typography>
-                </div>
-              </div>
-              <div className="mb-4 ">
-                <Typography className="font-poppins text-[20px] text-[#503C3C] m-1 px-2 font-medium ">Phone Number:</Typography>
-                <div className="bg-[#F3E1E1] w-[400px] p-[2px] rounded-2xl px-2 ">
-                  <Typography className="font-poppins text-[18px] text-[#503C3C] m-1 ">8976543227</Typography>
+                  <Typography className="font-poppins text-[18px] text-[#503C3C] m-1 ">{user.name}</Typography>
                 </div>
               </div>
               <div className="mb-4 ">
                 <Typography className="font-poppins text-[20px] text-[#503C3C] m-1 px-2 font-medium ">Email:</Typography>
                 <div className="bg-[#F3E1E1] w-[400px] p-[2px] rounded-2xl px-2 ">
-                  <Typography className="font-poppins text-[18px] text-[#503C3C] m-1 ">alexferguson@gmail.com</Typography>
+                  <Typography className="font-poppins text-[18px] text-[#503C3C] m-1 ">{user.email}</Typography>
                 </div>
               </div>
               <div className="mb-4 ">
-                <Typography className="font-poppins text-[20px] text-[#503C3C] m-1 px-2 font-medium ">Password:</Typography>
+                <Typography className="font-poppins text-[20px] text-[#503C3C] m-1 px-2 font-medium ">Position:</Typography>
                 <div className="bg-[#F3E1E1] w-[400px] p-[2px] rounded-2xl px-2 ">
-                  <Typography className="font-poppins text-[18px] text-[#503C3C] m-1 ">project@af</Typography>
-                </div>
-              </div>
-              <div className="mb-4 ">
-                <Typography className="font-poppins text-[20px] text-[#503C3C] m-1 px-2 font-medium ">Skills:</Typography>
-                <div className="flex flex-wrap gap-2">
-                  {skills.map((skill, index) => (
-                    <Typography key={index} className="py-1 px-2 rounded-xl bg-[#F3E1E1] font-poppins text-[18px] text-[#503C3C] ">{skill}</Typography>
-                  ))}
+                  <Typography className="font-poppins text-[18px] text-[#503C3C] m-1 ">{user.position}</Typography>
                 </div>
               </div>
             </div>
