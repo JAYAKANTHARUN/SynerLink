@@ -1,4 +1,4 @@
-import React,{useState} from "react";
+import React, { useState } from "react";
 import login from "../images/login.jpg";
 
 import {
@@ -11,35 +11,38 @@ import {
 import { useNavigate } from "react-router-dom";
 import Footer from "./Footer";
 import Nav from "./Nav";
+import { EyeSlashIcon, EyeIcon } from "@heroicons/react/24/solid";
 
 const Login = () => {
-const [email, setemail] = useState('')
-const [password, setpassword] = useState('')
-const navigate = useNavigate();
+  const [email, setemail] = useState("");
+  const [password, setpassword] = useState("");
+  const [isChecked, setIsChecked] = useState(false);
+  const [passwordShown, setPasswordShown] = useState(false);
+  const togglePasswordVisiblity = () => setPasswordShown((cur) => !cur);
+  const navigate = useNavigate();
 
-  const handlelogin = async() => {
-        console.log('clicked login button')
-        console.log( email, password)
-        let result = await fetch('http://192.168.1.8:5000/login', {
-            method: 'post',
-            body: JSON.stringify({ email, password }),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        result = await result.json()
-        console.log(result)
-    //     if (result.user.name && result.user.email && result.auth) {
-    //         localStorage.setItem("user", JSON.stringify(result.user))
-    //         localStorage.setItem("token", JSON.stringify(result.auth))
-    //         setIsLoading(false)
-    //         navigate('/userproducts')
-    //     }
-    //     else {
-    //         setIsLoading(false)
-    //         alert("Please enter valid details")
-    //     }
-    // navigate("/landing");
+  const handlelogin = async () => {
+    if (email && password && isChecked) {
+      let result = await fetch("http://192.168.29.250:5000/login", {
+        method: "post",
+        body: JSON.stringify({ email, password }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      result = await result.json();
+      console.log(result);
+      if (result.login == "True") {
+        localStorage.clear();
+        localStorage.setItem("email", email);
+        navigate("/landing");
+      } else if (result.login == "False") {
+        alert("Login failed");
+      }
+    } else {
+      alert("Enter valid details");
+    }
   };
 
   return (
@@ -95,10 +98,13 @@ const navigate = useNavigate();
                     Your Email
                   </Typography>
                   <Input
-                  type="email" id='email' value={email} onChange={(e) => { setemail(e.target.value) }}
-
-                  
-                  size="lg"
+                    type="email"
+                    id="email"
+                    value={email}
+                    onChange={(e) => {
+                      setemail(e.target.value);
+                    }}
+                    size="lg"
                     placeholder="name@mail.com"
                     className=" !border-[#7D5A5A] focus:!border-[#7D5A5A] font-poppins bg-[#FAF2F2]"
                     labelProps={{
@@ -113,16 +119,35 @@ const navigate = useNavigate();
                     Password
                   </Typography>
                   <Input
-                    type="password" id='password' value={password} onChange={(e) => { setpassword(e.target.value) }} 
+                    type={passwordShown ? "text" : "password"}
+                    id="password"
+                    value={password}
+                    onChange={(e) => {
+                      setpassword(e.target.value);
+                    }}
                     size="lg"
                     placeholder="********"
                     className=" !border-[#7D5A5A] focus:!border-[#7D5A5A] font-poppins bg-[#FAF2F2] "
                     labelProps={{
                       className: "before:content-none after:content-none",
                     }}
+                    icon={
+                      <i
+                        onClick={togglePasswordVisiblity}
+                        className="-mt-[3px] p-[5px] hover:bg-[#e9e3e3] rounded-full transition-all duration-300 ease-in-out "
+                      >
+                        {passwordShown ? (
+                          <EyeIcon className="h-5 w-5 text-[#7D5A5A]" />
+                        ) : (
+                          <EyeSlashIcon className="h-5 w-5 text-[#7D5A5A]" />
+                        )}
+                      </i>
+                    }
                   />
                 </div>
                 <Checkbox
+                  checked={isChecked}
+                  onChange={(e) => setIsChecked(e.target.checked)}
                   label={
                     <Typography
                       variant="small"
